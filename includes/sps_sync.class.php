@@ -123,6 +123,11 @@ if( !class_exists ( 'SPS_Sync' ) ) {
             if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
                 return;
 
+            global $sps_settings;
+            $enabled_types = $sps_settings ? $sps_settings->sps_get_sync_enabled_post_types() : array();
+            if ( ! empty( $enabled_types ) && isset( $post->post_type ) && ! in_array( $post->post_type, $enabled_types, true ) ) {
+                return;
+            }
 
             $sps_website = isset($_REQUEST['sps_website']) ? $_REQUEST['sps_website'] : array();
             $status_not = array('auto-draft', 'trash', 'inherit', 'draft');

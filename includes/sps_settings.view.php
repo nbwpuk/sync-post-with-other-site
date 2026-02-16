@@ -27,7 +27,13 @@ echo '<form name="sps_settings" id="sps_settings" method="post" >';
     if(!empty($general_option)) {
         $total_record = count($general_option['sps_host_name']);
         $spcn = 0;
-        
+
+        echo '<nav class="nav-tab-wrapper wp-clearfix" aria-label="' . esc_attr__( 'Secondary menu', SPS_txt_domain ) . '">';
+        echo '<a href="#sps-tab-general" class="nav-tab nav-tab-active" data-tab="sps-tab-general">' . esc_html__( 'General', SPS_txt_domain ) . '</a>';
+        echo '<a href="#sps-tab-post-types" class="nav-tab" data-tab="sps-tab-post-types">' . esc_html__( 'Post types', SPS_txt_domain ) . '</a>';
+        echo '</nav>';
+
+        echo '<div id="sps-tab-general" class="sps-tab-panel">';
         echo '<div class="cmrc-table">';
             echo '<div class="setting-general" >';
                 echo '<h2>'.__('General options', SPS_txt_domain).'</h2>';
@@ -145,13 +151,41 @@ echo '<form name="sps_settings" id="sps_settings" method="post" >';
                     </div>         
                     <?php
                     $spcn++;
-                }       
+                }
 
             echo '<input type="hidden" id="auto_increment" value="'.$spcn.'">';
             echo '</div>';
         echo '</div>';
-       
+        echo '<p class="add_more_site">';
+        echo '<input type="button" name="add_more_site" class="button-primary " value="' . esc_attr__( 'Add more site', SPS_txt_domain ) . '" >';
+        echo '</p>';
+        echo '</div><!-- #sps-tab-general -->';
 
+        $sps_post_types         = $sps_settings->sps_get_post_types();
+        $sps_post_types_enabled = isset( $general_option['sps_post_types_enabled'] ) && is_array( $general_option['sps_post_types_enabled'] ) ? $general_option['sps_post_types_enabled'] : array();
+        $sps_post_types_default = empty( $sps_post_types_enabled );
+        ?>
+        <div id="sps-tab-post-types" class="sps-tab-panel" style="display:none;">
+            <h2><?php esc_html_e( 'Post types', SPS_txt_domain ); ?></h2>
+            <p><?php esc_html_e( 'Choose which post types can use sync. The "Select Websites" box and sync will only appear for enabled types.', SPS_txt_domain ); ?></p>
+            <table class="form-table sps-setting-form">
+                <tbody>
+                    <?php foreach ( $sps_post_types as $pt_slug => $pt_label ) : ?>
+                    <tr>
+                        <th scope="row"><?php echo esc_html( $pt_label ); ?></th>
+                        <td>
+                            <label for="sps_post_types_enabled_<?php echo esc_attr( $pt_slug ); ?>">
+                                <input type="checkbox" name="sps_post_types_enabled[<?php echo esc_attr( $pt_slug ); ?>]" id="sps_post_types_enabled_<?php echo esc_attr( $pt_slug ); ?>" value="1" class="sps_checkbox" <?php echo ( ( $sps_post_types_default && $pt_slug === 'post' ) || ( ! $sps_post_types_default && isset( $sps_post_types_enabled[ $pt_slug ] ) ) ) ? ' checked="checked"' : ''; ?> />
+                                <?php esc_html_e( 'Enable sync for this post type', SPS_txt_domain ); ?>
+                            </label>
+                            <span class="description">(<?php echo esc_html( $pt_slug ); ?>)</span>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div><!-- #sps-tab-post-types -->
+        <?php
     }
     ?>
 
@@ -236,10 +270,6 @@ echo '<form name="sps_settings" id="sps_settings" method="post" >';
         </div>
     </script>
     <?php
-    echo '<p class="add_more_site">';
-    echo '<input type="button" name="add_more_site" class="button-primary " value="Add more site" >';
-    echo '</p>';
-
     echo '<p class="submit">';
     echo '<input type="hidden" name="sps_setting" id="sps_setting" value="sps_setting" />';
     echo '<input name="sps_setting_save" class="button-primary sps_setting_save" type="submit" value="Save changes" />';

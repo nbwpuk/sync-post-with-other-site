@@ -1,3 +1,26 @@
+/**** Settings page tabs *****/
+jQuery( document ).on( 'click', '.sps_content .nav-tab-wrapper .nav-tab', function( e ) {
+	var tab = jQuery( this ).attr( 'data-tab' );
+	if ( ! tab ) { return; }
+	e.preventDefault();
+	jQuery( '.sps_content .nav-tab-wrapper .nav-tab' ).removeClass( 'nav-tab-active' );
+	jQuery( this ).addClass( 'nav-tab-active' );
+	jQuery( '.sps_content .sps-tab-panel' ).hide();
+	jQuery( '.sps_content #' + tab ).show();
+	if ( window.history && window.history.replaceState ) {
+		window.history.replaceState( null, null, '#' + tab );
+	}
+} );
+jQuery( function() {
+	var hash = window.location.hash.replace( '#', '' );
+	if ( hash && jQuery( '.sps_content #' + hash ).length ) {
+		jQuery( '.sps_content .nav-tab-wrapper .nav-tab' ).removeClass( 'nav-tab-active' );
+		jQuery( '.sps_content .nav-tab[data-tab="' + hash + '"]' ).addClass( 'nav-tab-active' );
+		jQuery( '.sps_content .sps-tab-panel' ).hide();
+		jQuery( '.sps_content #' + hash ).show();
+	}
+} );
+
 /**** Dismissible admin notices (settings success message) *****/
 jQuery( document ).on( 'click', '.notice.is-dismissible .notice-dismiss', function() {
 	jQuery( this ).closest( '.notice' ).fadeTo( 100, 0, function() {

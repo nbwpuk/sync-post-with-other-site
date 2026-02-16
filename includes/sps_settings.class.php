@@ -17,14 +17,15 @@ if( !class_exists ( 'SPS_Settings' ) ) {
 
         function sps_default_setting_option() {
             return array(
-                'sps_rest_rate_limit' => 60,
-                'sps_host_name' => array( '0' => '' ),
-                'sps_strict_mode' => array( '0' => '1' ),
-                'sps_content_match' => array( '0' => 'title' ),
-                'sps_content_username' => array( '0' => '' ),
-                'sps_content_password' => array( '0' => '' ),
-                'sps_selected' => array( '0' => ''),
-                'sps_roles_allowed' => array( '0' => array('roles' => array( 'administrator' => 'on', 'editor' => 'on', 'author' => 'on' ) ) )
+                'sps_rest_rate_limit'     => 60,
+                'sps_post_types_enabled'  => array(),
+                'sps_host_name'           => array( '0' => '' ),
+                'sps_strict_mode'         => array( '0' => '1' ),
+                'sps_content_match'       => array( '0' => 'title' ),
+                'sps_content_username'    => array( '0' => '' ),
+                'sps_content_password'   => array( '0' => '' ),
+                'sps_selected'            => array( '0' => ''),
+                'sps_roles_allowed'       => array( '0' => array('roles' => array( 'administrator' => 'on', 'editor' => 'on', 'author' => 'on' ) ) )
             );
         }
 
@@ -41,6 +42,14 @@ if( !class_exists ( 'SPS_Settings' ) ) {
 
                 if ( isset( $params['sps_rest_rate_limit'] ) ) {
                     $params['sps_rest_rate_limit'] = max( 5, min( 500, absint( $params['sps_rest_rate_limit'] ) ) );
+                }
+
+                if ( isset( $params['sps_post_types_enabled'] ) && is_array( $params['sps_post_types_enabled'] ) ) {
+                    $allowed_types = array_keys( $this->sps_get_post_types() );
+                    $params['sps_post_types_enabled'] = array_intersect_key(
+                        array_map( 'sanitize_key', $params['sps_post_types_enabled'] ),
+                        array_flip( $allowed_types )
+                    );
                 }
 
                 if( isset($params['sps_host_name']) && !empty($params['sps_host_name']) ) {
@@ -104,6 +113,26 @@ if( !class_exists ( 'SPS_Settings' ) ) {
                 }
             }
             return $all_types;
+        }
+
+        /**
+         * Returns post type slugs for which sync is enabled.
+         * Empty stored value means only 'post' is enabled (default).
+         *
+         * @return array List of post type slugs.
+         */
+        function sps_get_sync_enabled_post_types() {
+            $settings = $this->sps_get_settings_func();
+            $enabled  = isset( $settings['sps_post_types_enabled'] ) && is_array( $settings['sps_post_types_enabled'] )
+                ? $settings['sps_post_types_enabled']
+                : array();
+            $allowed  = array_keys( $this->sps_get_post_types() );
+
+            if ( empty( $enabled ) ) {
+                return array_values( array_intersect( array( 'post' ), $allowed ) );
+            }
+
+            return array_values( array_intersect( $allowed, array_keys( $enabled ) ) );
         }
        
     }

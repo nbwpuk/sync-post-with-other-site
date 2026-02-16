@@ -18,7 +18,7 @@ if (!class_exists('SPS_Post_Meta')) {
                 'sps_websites', 
                 __('Select Websites', SPS_txt_domain), 
                 array( $this, 'print_meta_fields' ), 
-                $sps_settings->sps_get_post_types(), 
+                $sps_settings->sps_get_sync_enabled_post_types(), 
                 'side', 
                 'default'
             );
