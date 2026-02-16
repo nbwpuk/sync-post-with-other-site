@@ -17,6 +17,7 @@ if( !class_exists ( 'SPS_Settings' ) ) {
 
         function sps_default_setting_option() {
             return array(
+                'sps_rest_rate_limit' => 60,
                 'sps_host_name' => array( '0' => '' ),
                 'sps_strict_mode' => array( '0' => '1' ),
                 'sps_content_match' => array( '0' => 'title' ),
@@ -37,6 +38,10 @@ if( !class_exists ( 'SPS_Settings' ) ) {
                 $sps_setting = $params['sps_setting'];
                 unset( $params['sps_setting'] );
     			unset( $params['sps_setting_save'] );
+
+                if ( isset( $params['sps_rest_rate_limit'] ) ) {
+                    $params['sps_rest_rate_limit'] = max( 5, min( 500, absint( $params['sps_rest_rate_limit'] ) ) );
+                }
 
                 if( isset($params['sps_host_name']) && !empty($params['sps_host_name']) ) {
                     $hostnames = array();

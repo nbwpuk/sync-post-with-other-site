@@ -22,13 +22,39 @@ if( !class_exists ( 'SPS_Sync' ) ) {
 
         function rest_api_init_func() {
             register_rest_route( 'sps/v1', '/data', array(
-                'methods'  => 'POST',
-                'callback' => array( $this, 'sps_get_request'  ),
-                'permission_callback' => '__return_true'
-                // 'permission_callback' => function () {
-                //     return current_user_can( 'edit_posts' );
-                // }
+                'methods'             => 'POST',
+                'callback'            => array( $this, 'sps_get_request' ),
+                'permission_callback' => array( $this, 'sps_rest_permission_callback' ),
             ) );
+        }
+
+        /**
+         * Permission callback for REST route: allow request only if rate limit not exceeded.
+         * Authentication is done inside the callback via credentials in the body (server-to-server sync).
+         * Rate limiting prevents brute-force attempts without blocking legitimate syncs.
+         *
+         * @param WP_REST_Request $request Request object.
+         * @return bool True if request is allowed, false to reject (WP will return 403).
+         */
+        function sps_rest_permission_callback( $request ) {
+            $ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+            if ( empty( $ip ) ) {
+                return true; // Allow if IP not available (e.g. behind proxy); consider adding X-Forwarded-For later.
+            }
+
+            $transient_key = 'sps_rate_' . md5( $ip );
+            $count         = (int) get_transient( $transient_key );
+
+            $settings = get_option( 'sps_setting', array() );
+            $limit    = isset( $settings['sps_rest_rate_limit'] ) ? max( 5, min( 500, absint( $settings['sps_rest_rate_limit'] ) ) ) : 60;
+            $window   = 60; // seconds
+
+            if ( $count >= $limit ) {
+                return false;
+            }
+
+            set_transient( $transient_key, $count + 1, $window );
+            return true;
         }
 
         function filter_post_data( $data , $postarr ) {

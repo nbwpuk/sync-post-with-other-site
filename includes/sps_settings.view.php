@@ -30,6 +30,21 @@ echo '<form name="sps_settings" id="sps_settings" method="post" >';
         echo '<div class="cmrc-table">';
             echo '<div class="setting-general" >';
                 echo '<h2>'.__('General options', SPS_txt_domain).'</h2>';
+                $sps_rest_rate_limit = isset( $general_option['sps_rest_rate_limit'] ) ? absint( $general_option['sps_rest_rate_limit'] ) : 60;
+                $sps_rest_rate_limit = max( 5, min( 500, $sps_rest_rate_limit ) );
+                ?>
+                <table class="form-table sps-setting-form">
+                    <tbody>
+                        <tr>
+                            <th><label for="sps_rest_rate_limit"><?php _e( 'REST API rate limit', SPS_txt_domain ); ?></label></th>
+                            <td>
+                                <input type="number" name="sps_rest_rate_limit" id="sps_rest_rate_limit" class="sps_input small-text" value="<?php echo esc_attr( $sps_rest_rate_limit ); ?>" min="5" max="500" step="1" />
+                                <p><?php _e( 'Max requests per minute per IP to the sync endpoint. Helps prevent brute force (default 60).', SPS_txt_domain ); ?></p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <?php
                 foreach ($general_option['sps_host_name'] as $sps_key => $sps_value) { 
                 
                     $sps_host_name      = ($sps_value) ? $sps_value : '';

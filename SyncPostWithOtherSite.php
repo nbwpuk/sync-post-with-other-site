@@ -9,6 +9,7 @@ Author URI: https://kp4coder.com/
 Domain Path: /languages
 Text Domain: sps_text_domain
 License: GPL2 or later 
+Contributors: nbwpuk
 */
 
 /*
