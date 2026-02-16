@@ -61,7 +61,7 @@ if( !class_exists ( 'SPS_Sync' ) ) {
             global $post_old_title;
             if( isset($postarr['ID']) && !empty($postarr['ID']) ) {
                 $old_data = get_posts( array( 'ID' => $postarr['ID'] ) );
-                if( $old_data && isset($old_data[0]->post_title) && $postarr != $old_data[0]->post_title ) {
+                if( $old_data && isset($old_data[0]->post_title) && isset($postarr['post_title']) && $postarr['post_title'] !== $old_data[0]->post_title ) {
                     $post_old_title = $old_data[0]->post_title; 
                 } 
             }
