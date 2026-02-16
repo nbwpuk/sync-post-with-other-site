@@ -6,15 +6,16 @@ if( isset( $_REQUEST['sps_setting_save'] ) && isset( $_REQUEST['sps_setting'] ) 
 
 echo '<div class="wrap sps_content">';
 
-if( isset($_SESSION['sps_msg_status']) && $_SESSION['sps_msg_status'] ) { 
-    echo '<div id="message" class="updated notice notice-success is-dismissible">';
-    echo '<p>';
-    echo (isset($_SESSION['sps_msg']) && $_SESSION['sps_msg']!='') ? $_SESSION['sps_msg'] : 'Something went wrong. Please try again';
-    echo '</p>';
-    echo '<button type="button" class="notice-dismiss"><span class="screen-reader-text">'.__('Dismiss this notice.',SPS_txt_domain).'</span></button>';
-    echo '</div>';
-	unset($_SESSION['sps_msg_status']);
-	unset($_SESSION['sps_msg']);
+$sps_notice_key = 'sps_settings_msg_' . get_current_user_id();
+$sps_notice     = get_transient( $sps_notice_key );
+if ( $sps_notice !== false && ! empty( $sps_notice['status'] ) ) {
+	delete_transient( $sps_notice_key );
+	echo '<div id="message" class="updated notice notice-success is-dismissible">';
+	echo '<p>';
+	echo ! empty( $sps_notice['msg'] ) ? esc_html( $sps_notice['msg'] ) : esc_html__( 'Something went wrong. Please try again.', SPS_txt_domain );
+	echo '</p>';
+	echo '<button type="button" class="notice-dismiss"><span class="screen-reader-text">' . esc_html__( 'Dismiss this notice.', SPS_txt_domain ) . '</span></button>';
+	echo '</div>';
 } 
 
 echo '<form name="sps_settings" id="sps_settings" method="post" >';

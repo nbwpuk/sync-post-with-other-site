@@ -60,8 +60,14 @@ if( !class_exists ( 'SPS_Settings' ) ) {
 
                 update_option('sps_setting', $params);
 
-    			$_SESSION['sps_msg_status'] = true;
-    			$_SESSION['sps_msg'] = 'Settings updated successfully.';
+    			set_transient(
+    				'sps_settings_msg_' . get_current_user_id(),
+    				array(
+    					'status' => true,
+    					'msg'    => __( 'Settings updated successfully.', SPS_txt_domain ),
+    				),
+    				60
+    			);
 
     		}
     	}
