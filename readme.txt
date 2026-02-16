@@ -1,5 +1,5 @@
 === Sync Post With Other Site ===
-Contributors: kp4coder
+Contributors: kp4coder,nbwpuk
 Donate link: https://www.paypal.com/ncp/payment/UGG343HNQLG2N
 Tags: wp sync post, sync post with multiple sites, post content sync, migrate post content, synchronization post
 Requires at least: 4.5
@@ -7,7 +7,6 @@ Tested up to: 6.6.1
 Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Contributors: nbwpuk
 
 Allows user to sync Posts, Pages and Custom Post Type with multiple websites.
 
