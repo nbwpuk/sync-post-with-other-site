@@ -1,3 +1,12 @@
+/**** Dismissible admin notices (settings success message) *****/
+jQuery( document ).on( 'click', '.notice.is-dismissible .notice-dismiss', function() {
+	jQuery( this ).closest( '.notice' ).fadeTo( 100, 0, function() {
+		jQuery( this ).slideUp( 100, function() {
+			jQuery( this ).remove();
+		} );
+	} );
+} );
+
 /**** Add more website *****/
 jQuery(".add_more_site").on("click",function(){
 	var pre_squ = jQuery("#auto_increment").val();
